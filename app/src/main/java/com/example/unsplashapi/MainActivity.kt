@@ -3,6 +3,8 @@ package com.example.unsplashapi
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.unsplashapi.databinding.ActivityMainBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +14,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
+    var imagelist:List<ImageModel>?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(mainBinding.root)
 
         mainBinding.button.setOnClickListener {
+
             ApiUtilities.getApiInterface().getImages(30, 10)
                 .enqueue(object : Callback<List<ImageModel>> {
                     override fun onResponse(
@@ -27,7 +31,18 @@ class MainActivity : AppCompatActivity() {
                     ) {
 
                         if (response.body() != null) {
-                            Log.d("myRetro", "${response.body()}")
+
+                            imagelist = response.body()
+
+                            if (imagelist != null){
+
+                                Log.d("myRetro", imagelist!![0].urls.regular)
+
+                                Glide.with(this@MainActivity)
+                                    .load(imagelist!![0].urls.regular)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(mainBinding.imageView)
+                            }
                         }
 
                     }
