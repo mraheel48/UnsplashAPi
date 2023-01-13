@@ -14,7 +14,8 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
-    var imagelist:List<ImageModel>?=null
+    var imagelist: List<ImageModel>? = null
+    var searchList: ArrayList<SearchModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
                             imagelist = response.body()
 
-                            if (imagelist != null){
+                            if (imagelist != null) {
 
                                 Log.d("myRetro", imagelist!![0].urls.regular)
 
@@ -52,6 +53,20 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 })
+
+            ApiUtilities.getApiInterface().searchImages("").enqueue(object : Callback<SearchModel> {
+                override fun onResponse(call: Call<SearchModel>, response: Response<SearchModel>) {
+                    if (response.body() != null) {
+                        imagelist = response.body()!!.results
+                    }
+                }
+
+                override fun onFailure(call: Call<SearchModel>, t: Throwable) {
+
+                }
+
+            })
+
         }
 
     }
